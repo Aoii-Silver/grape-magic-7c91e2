@@ -3,42 +3,44 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#0E1B2C" />
+    <meta name="theme-color" content="#F0EEE8" />
     <meta name="robots" content="noindex, nofollow" />
     <title>葡萄を恋にする魔法</title>
     <link rel="preload" as="image" href="assets/cover.jpg" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css?v=2" />
   </head>
   <body>
     <main class="experience" data-state="cover">
-      <div class="swirl" aria-hidden="true"></div>
-      <div class="stars" aria-hidden="true">
-        <i></i><i></i><i></i><i></i><i></i>
-      </div>
-
-      <header class="edition" aria-label="收藏資訊">
-        <span>No. 001 / 001</span>
-        <span>2026 · 元旦</span>
+      <header class="masthead" aria-label="作品資訊">
+        <span class="site-name">VAN-$ABU-GOGH</span>
+        <span class="edition">PRIVATE FILM&nbsp;&nbsp;/&nbsp;&nbsp;001</span>
       </header>
+
+      <aside class="folio" aria-hidden="true">
+        <span>2026</span>
+        <span>PROCESS STUDY</span>
+      </aside>
 
       <button class="artwork" type="button" aria-label="播放製作影片">
         <picture class="cover-picture">
           <source srcset="assets/cover.png" type="image/png" />
           <img src="assets/cover.jpg" alt="葡萄を恋にする魔法收藏卡封面" />
         </picture>
-        <span class="glint" aria-hidden="true"></span>
         <span class="play-button" aria-hidden="true">
-          <span class="play-ring"></span>
           <svg viewBox="0 0 24 24"><path d="M9 7.4 17 12l-8 4.6Z" /></svg>
+          <span>PLAY</span>
         </span>
       </button>
 
       <section class="title-block" aria-labelledby="title">
-        <h1 id="title"><span>葡萄を</span><span>恋にする魔法</span></h1>
-        <p>THE MAGIC THAT MAKES GRAPES FALL IN LOVE</p>
+        <p class="work-index">01</p>
+        <div>
+          <h1 id="title">葡萄を恋にする魔法</h1>
+          <p>THE MAGIC THAT MAKES GRAPES FALL IN LOVE</p>
+        </div>
       </section>
 
-      <button class="begin" type="button">touch to begin</button>
+      <button class="begin" type="button"><span>VIEW PROCESS</span><span aria-hidden="true">↗</span></button>
       <p class="ending-copy" aria-live="polite"></p>
 
       <section class="player" aria-label="影片播放器">
@@ -49,7 +51,7 @@
           playsinline
           webkit-playsinline
         ></video>
-        <p class="mini-title">葡萄を恋にする魔法</p>
+        <p class="mini-title"><span>01</span> 葡萄を恋にする魔法</p>
 
         <div class="buffer" aria-hidden="true"></div>
         <p class="error-message" role="status">影片暫時無法播放，請稍後再試</p>
@@ -77,6 +79,6 @@
 
       <p class="status-message" role="status">Coming soon</p>
     </main>
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
   </body>
 </html>

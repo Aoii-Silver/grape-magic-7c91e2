@@ -143,7 +143,7 @@ video.addEventListener('ended', () => {
   player.classList.remove('controls-visible');
   setTimeout(() => {
     setState('ended');
-    begin.textContent = 'もう一度';
+    begin.innerHTML = '<span>VIEW AGAIN</span><span aria-hidden="true">↗</span>';
   }, 400);
 });
 
