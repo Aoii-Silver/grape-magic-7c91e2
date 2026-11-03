@@ -46,9 +46,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .artwork::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 1px 0 #ecebe728; pointer-events: none; }
 .artwork img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 4px; }
 .artwork:active { transform: scale(.988); border-color: var(--gold); }
-.margin-note, .artwork-year { position: absolute; color: #9caab8; font-size: 8px; letter-spacing: .17em; }
+.margin-note { position: absolute; color: #9caab8; font-size: 8px; letter-spacing: .17em; }
 .margin-note { writing-mode: vertical-rl; transform: rotate(180deg); right: calc(100% + 15px); top: 3px; }
-.artwork-year { right: 1px; bottom: -22px; font-family: Georgia, serif; font-size: 10px; }
 .play-mark {
   position: absolute; right: 17px; bottom: 18px; width: 54px; height: 54px;
   display: grid; place-items: center; border: 1px solid #ede6d399; border-radius: 50%;
