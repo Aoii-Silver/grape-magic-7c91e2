@@ -78,7 +78,7 @@ h1 > span { display: block; width: fit-content; margin: 0 auto; padding-left: .1
     background-image: linear-gradient(110deg, #e5a2bf 0%, #e5a2bf 37%, #b7688e 43%, #f6cede 47%, #ffffff 50%, #f6cede 53%, #b7688e 57%, #e5a2bf 63%, #e5a2bf 100%);
     background-size: 300% 100%; background-position: 100% 50%; background-repeat: no-repeat;
     -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
-    animation: rose-metal 1.8s .45s var(--ease) infinite both;
+    animation: rose-metal 5.6s .45s cubic-bezier(.45, 0, .55, 1) infinite both;
   }
 }
 .subtitle { margin: 12px 0 0; text-align: center; color: var(--mist); font-family: "Baskerville", Georgia, serif; font-style: italic; font-size: 14px; letter-spacing: .025em; }
