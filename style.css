@@ -83,13 +83,8 @@ h1 > span { display: block; width: fit-content; margin: 0 auto; padding-left: .1
 }
 .subtitle { margin: 12px 0 0; text-align: center; color: var(--mist); font-family: "Baskerville", Georgia, serif; font-style: italic; font-size: 14px; letter-spacing: .025em; }
 .cover-footer { text-align: center; align-self: end; position: relative; }
-.begin { min-height: 44px; min-width: 150px; display: inline-flex; align-items: center; justify-content: center; gap: 15px; border: 0; padding: 0 10px; background: none; font-family: "Baskerville", Georgia, serif; font-size: 13px; font-style: italic; letter-spacing: .06em; color: var(--ivory); }
-.begin-line { height: 1px; width: 24px; background: var(--gold); transition: width .3s; }
-.begin-label:lang(ja) { font-family: "Shippori Mincho", "Hiragino Mincho ProN", serif; font-style: normal; }
-.begin:active .begin-line { width: 34px; }
 .status-message { margin: 0; color: var(--mist); font-size: 11px; line-height: 1.5; }
 .status-message:empty { display: none; }
-.has-error .begin { min-height: 32px; }
 .player { position: fixed; inset: 0; z-index: 10; background: var(--deep); opacity: 0; visibility: hidden; transition: opacity .45s var(--ease), visibility .45s; }
 .player video { display: block; width: 100%; height: 100%; object-fit: contain; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 .experience[data-state="playing"] .player, .experience[data-state="paused"] .player { opacity: 1; visibility: visible; }

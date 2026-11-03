@@ -3,8 +3,6 @@ const cover = document.querySelector('.cover-page');
 const player = document.querySelector('.player');
 const video = document.querySelector('video');
 const artwork = document.querySelector('.artwork');
-const begin = document.querySelector('.begin');
-const beginLabel = document.querySelector('.begin-label');
 const toggle = document.querySelector('.toggle-play');
 const mute = document.querySelector('.mute-control');
 const progress = document.querySelector('.progress');
@@ -15,7 +13,7 @@ let active = false;
 let seeking = false;
 let initiating = false;
 let launchVersion = 0;
-let returnFocus = begin;
+let returnFocus = artwork;
 const time = value => {
   const n = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
   return `${Math.floor(n / 60)}:${String(n % 60).padStart(2,'0')}`;
@@ -49,17 +47,14 @@ function returnToCover(ended = false) {
   root.dataset.state = ended ? 'ended' : 'cover';
   cover.inert = false; cover.removeAttribute('aria-hidden');
   player.inert = true; player.setAttribute('aria-hidden', 'true');
-  beginLabel.textContent = ended ? 'もう一度' : 'touch to begin';
-  beginLabel.lang = ended ? 'ja' : 'en';
-  begin.setAttribute('aria-label', ended ? '再次觀看製作影片' : '開啟製作影片');
-  if (ended) artwork.setAttribute('aria-label', '再次觀看製作影片');
+  artwork.setAttribute('aria-label', ended ? '再次觀看製作影片' : '播放卡牌製作影片');
   returnFocus.focus({preventScroll: true});
 }
 function showError() {
   returnToCover(false);
   root.classList.add('has-error');
-  statusMessage.textContent = '影片暫時無法播放，請點一下重試。';
-  beginLabel.textContent = 'try again';
+  statusMessage.textContent = '影片暫時無法播放，請點卡牌重試。';
+  artwork.setAttribute('aria-label', '重試播放製作影片');
 }
 function startFilm(event) {
   if (initiating) return;
@@ -94,7 +89,6 @@ function toggleFilm() {
   } else video.pause();
 }
 artwork.addEventListener('click', startFilm);
-begin.addEventListener('click', startFilm);
 toggle.addEventListener('click', toggleFilm);
 document.querySelector('.close-player').addEventListener('click', () => returnToCover(false));
 mute.addEventListener('click', () => { video.muted = !video.muted; showControls(); });
