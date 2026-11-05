@@ -8,10 +8,15 @@ const mute = document.querySelector('.mute-control');
 const progress = document.querySelector('.progress');
 const timecode = document.querySelector('.timecode');
 const statusMessage = document.querySelector('.status-message');
-let controlsTimer, bufferTimer, endTimer;
+const streamUrl = 'assets/film-hls1.m3u8';
+const fallbackUrl = 'assets/film-lite1.mp4';
+const stallLimit = 12000;
+let controlsTimer, bufferTimer, stallTimer, endTimer;
+let source = '', hls;
 let active = false;
 let seeking = false;
 let initiating = false;
+let wantsPlayback = false;
 let launchVersion = 0;
 let returnFocus = artwork;
 const time = value => {
@@ -39,11 +44,85 @@ function setPaused(paused) {
   toggle.setAttribute('aria-label', paused ? '繼續播放影片' : '暫停影片');
   showControls();
 }
-function clearBuffer() { clearTimeout(bufferTimer); player.classList.remove('is-buffering'); }
+function clearBuffer() {
+  clearTimeout(bufferTimer); bufferTimer = undefined;
+  clearTimeout(stallTimer); stallTimer = undefined;
+  player.classList.remove('is-buffering');
+}
+function watchBuffer() {
+  if (!active || video.paused || stallTimer) return;
+  bufferTimer = setTimeout(() => player.classList.add('is-buffering'), 450);
+  stallTimer = setTimeout(() => recoverPlayback(true), stallLimit);
+}
+function useFallback(position = 0) {
+  source = 'mp4';
+  hls?.destroy();
+  hls = undefined;
+  video.src = fallbackUrl;
+  if (position > 0) video.currentTime = position;
+}
+function prepareSource() {
+  const native = video.canPlayType('application/vnd.apple.mpegurl');
+  const library = window.Hls;
+  const useLibrary = library?.isSupported();
+  if (native && (navigator.vendor === 'Apple Computer, Inc.' || !useLibrary)) {
+    source = 'hls';
+    video.src = streamUrl;
+  } else if (useLibrary) {
+    source = 'hls';
+    hls = new library({startLevel: 0});
+    hls.on(library.Events.ERROR, (_, error) => {
+      if (!error.fatal) return;
+      if (active) recoverPlayback(wantsPlayback);
+      else useFallback(video.currentTime);
+    });
+    hls.loadSource(streamUrl);
+    hls.attachMedia(video);
+  } else {
+    useFallback();
+  }
+}
+function recoverPlayback(resume) {
+  if (source !== 'hls') {
+    showError();
+    return;
+  }
+  clearBuffer();
+  launchVersion++;
+  initiating = false;
+  useFallback(video.currentTime);
+  if (resume) requestPlayback();
+  else setPaused(true);
+}
+function requestPlayback() {
+  const attempt = ++launchVersion;
+  initiating = true;
+  wantsPlayback = true;
+  const started = video.play();
+  watchBuffer();
+  started.then(() => {
+    if (attempt !== launchVersion) return;
+    initiating = false;
+    showControls();
+  }).catch(error => {
+    if (attempt !== launchVersion || !active) return;
+    initiating = false;
+    clearBuffer();
+    if (error.name === 'AbortError' || error.name === 'NotAllowedError') {
+      wantsPlayback = false;
+      setPaused(true);
+    } else recoverPlayback(true);
+  });
+}
+function pausePlayback() {
+  wantsPlayback = false;
+  video.pause();
+}
 function returnToCover(ended = false) {
   active = false; initiating = false; launchVersion++;
   clearTimeout(controlsTimer); clearTimeout(endTimer); clearBuffer();
-  video.pause();
+  player.classList.remove('is-starting');
+  pausePlayback();
   root.dataset.state = ended ? 'ended' : 'cover';
   cover.inert = false; cover.removeAttribute('aria-hidden');
   player.inert = true; player.setAttribute('aria-hidden', 'true');
@@ -61,32 +140,23 @@ function startFilm(event) {
   returnFocus = event.currentTarget;
   clearTimeout(endTimer);
   root.classList.remove('has-error'); statusMessage.textContent = '';
-  if (video.error) video.load();
+  if (video.error) useFallback();
   if (video.ended || root.dataset.state === 'ended') video.currentTime = 0;
-  active = true; initiating = true;
-  const attempt = ++launchVersion;
+  active = true;
   player.inert = false; player.removeAttribute('aria-hidden');
   cover.inert = true; cover.setAttribute('aria-hidden', 'true');
   root.dataset.state = 'playing';
+  player.classList.toggle('is-starting', video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA);
+  if (!source) prepareSource();
   // Keep play() directly inside the touch/click event for iPhone Safari.
-  const started = video.play();
+  requestPlayback();
   returnFocus.blur();
   showControls();
   if (event.detail === 0) toggle.focus({preventScroll: true});
-  started.then(() => { if (attempt === launchVersion) { initiating = false; showControls(); } }).catch(error => {
-    if (attempt !== launchVersion || !active) return;
-    initiating = false;
-    if (error.name !== 'AbortError') showError();
-    else setPaused(true);
-  });
 }
 function toggleFilm() {
-  if (video.paused) {
-    const attempt = launchVersion;
-    video.play().catch(error => {
-      if (active && attempt === launchVersion && error.name !== 'AbortError') showError();
-    });
-  } else video.pause();
+  if (video.paused) requestPlayback();
+  else pausePlayback();
 }
 artwork.addEventListener('click', startFilm);
 toggle.addEventListener('click', toggleFilm);
@@ -123,10 +193,19 @@ video.addEventListener('loadedmetadata', syncTime);
 video.addEventListener('durationchange', syncTime);
 video.addEventListener('timeupdate', syncTime);
 video.addEventListener('play', () => setPaused(false));
-video.addEventListener('pause', () => { if (!video.ended) setPaused(true); });
-video.addEventListener('waiting', () => { clearTimeout(bufferTimer); bufferTimer = setTimeout(() => { if (active) player.classList.add('is-buffering'); }, 450); });
-['playing', 'canplay', 'seeked'].forEach(name => video.addEventListener(name, clearBuffer));
-video.addEventListener('error', () => { if (active) showError(); });
+video.addEventListener('pause', () => {
+  if (!video.paused) return;
+  clearBuffer();
+  if (!video.ended) setPaused(true);
+});
+video.addEventListener('waiting', watchBuffer);
+video.addEventListener('playing', () => {
+  clearBuffer();
+  player.classList.remove('is-starting');
+});
+video.addEventListener('error', () => {
+  if (active && video.error) recoverPlayback(wantsPlayback);
+});
 video.addEventListener('ended', () => { clearBuffer(); clearTimeout(controlsTimer); endTimer = setTimeout(() => returnToCover(true), 450); });
-document.addEventListener('visibilitychange', () => { if (document.hidden && active) video.pause(); });
-window.addEventListener('pagehide', () => video.pause());
+document.addEventListener('visibilitychange', () => { if (document.hidden && active) pausePlayback(); });
+window.addEventListener('pagehide', pausePlayback);

@@ -8,7 +8,7 @@
   <title>ぶどうをラブラブにする魔法</title>
   <link rel="preload" as="image" href="assets/cover-hold.jpg">
   <link rel="preload" as="font" href="assets/fonts/title-fine.woff2" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 <main class="experience" data-state="cover">
@@ -39,7 +39,7 @@
     </footer>
   </div>
   <section class="player" aria-label="卡牌製作影片播放器" aria-hidden="true" inert>
-    <video src="assets/video.mp4?v=4" poster="assets/cover-hold.jpg" preload="metadata" playsinline webkit-playsinline></video>
+    <video poster="assets/cover-hold.jpg" preload="none" playsinline webkit-playsinline></video>
     <div class="player-top player-ui">
       <button class="close-player control-button" type="button" aria-label="返回封面"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></button>
       <p class="mini-title" lang="ja">ぶどうをラブラブにする魔法</p>
@@ -60,8 +60,9 @@
       </div>
     </div>
   </section>
-  <noscript><p class="no-script">開啟 JavaScript 以觀看收藏影片，或<a href="assets/video.mp4?v=4">直接觀看影片</a>。</p></noscript>
+  <noscript><p class="no-script">開啟 JavaScript 以觀看收藏影片，或<a href="assets/film-lite1.mp4">直接觀看影片</a>。</p></noscript>
 </main>
-<script src="script.js?v=4"></script>
+<script defer src="assets/hls-1.7.4.min.js"></script>
+<script defer src="script.js?v=5"></script>
 </body>
 </html>
